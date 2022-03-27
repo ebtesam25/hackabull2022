@@ -33,7 +33,7 @@ export default function Login() {
         //   redirect: 'follow'
         // };
         
-        // fetch("https://us-central1-aiot-fit-xlab.cloudfunctions.net/suseats", requestOptions)
+        // fetch("https://us-central1-aiot-fit-xlab.cloudfunctions.net/", requestOptions)
         //   .then(response => response.json())
         //   .then(result => {console.log(result); if(result.status=="success"){navigation.navigate('Home',{userid:result.userid, name:result.name})}})
         //   .catch(error => console.log('error', error));
