@@ -4,6 +4,20 @@ import board
 import adafruit_bme680
 from adafruit_bme280 import basic as adafruit_bme280
 from analogio import AnalogIn
+from secrets import secrets 
+import ssl
+import socketpool
+import wifi
+import adafruit_minimqtt.adafruit_minimqtt as MQTT
+
+try:
+    from secrets import secrets
+except ImportError:
+    print("WiFi secrets are kept in secrets.py, please add them there!")
+    raise
+
+aio_username = secrets["aio_username"]
+aio_key = secrets["aio_key"]
 
 i2c = busio.I2C(board.SCL1, board.SDA1)
 sensor = adafruit_bme680.Adafruit_BME680_I2C(i2c)
@@ -14,6 +28,11 @@ an2 = AnalogIn(board.A2)
 samples = [0] * 10
 hsamples = [0] * 10
 datas = []
+
+print("Connecting to %s" % secrets["ssid"])
+wifi.radio.connect(secrets["ssid"], secrets["password"])
+print("Connected to %s!" % secrets["ssid"])
+
 while True:
     #print((sensor.temperature,sensor.humidity))
     #print((bme280.temperature, bme280.humidity))
