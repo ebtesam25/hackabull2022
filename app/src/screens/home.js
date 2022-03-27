@@ -25,33 +25,18 @@ import respirationData from '../data/respiration.json';
 import stepsData from '../data/steps.json';
 import stressData from '../data/stress.json';
 
-const _getReadings= (action) =>{
-    var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
 
-        var raw = JSON.stringify({
-        "action": action
-        });
 
-        var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-        };
-
-        fetch("https://gx1znbtqdb.execute-api.us-east-1.amazonaws.com/hackabull2022test", requestOptions)
-        .then(response => response.json())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
-}
 
 export default function Home({route}) {
+    const [result, setresult] = useState(null);
+
     const navigation = useNavigation();
     const {userid, name} = route.params;
     const [visible, setVisible] = useState(false);
     const containerStyle = {padding: 20, backgroundColor:'transparent'};
     const [datatype, setdatatype] = useState(null)
+    const [secondarydata, setsecondarydata] = useState(null)
 
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
@@ -72,6 +57,27 @@ export default function Home({route}) {
         useShadowColorFromDataset: true // optional
       };
 
+      const _getReadings= (action) =>{
+        var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+    
+            var raw = JSON.stringify({
+            "action": action
+            });
+    
+            var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            };
+    
+            fetch("https://gx1znbtqdb.execute-api.us-east-1.amazonaws.com/hackabull2022test", requestOptions)
+            .then(response => response.json())
+            .then(result => {console.log(result);setresult(result)})
+            .catch(error => console.log('error', error));
+        }
+
 
    
 
@@ -88,6 +94,9 @@ export default function Home({route}) {
             datasets: [
                 {
                 data: datatype
+                },
+                {
+                data:secondarydata
                 }
             ]
             }}
@@ -133,7 +142,7 @@ export default function Home({route}) {
         style={{height:150, borderRadius:20, width:'45%', marginTop:'5%'}}
         >
         <View style={{backgroundColor:theme.secondarybg}}>
-            <TouchableOpacity onPress={()=>{setdatatype(hrateData.heartRateValues.flatMap((x)=>parseInt(x[1])));showModal()}}><Icon name="heart-pulse" type="material-community" color="#FFF" size={50}></Icon></TouchableOpacity>
+            <TouchableOpacity onPress={()=>{_getReadings("getheartrate");setdatatype(hrateData.heartRateValues.flatMap((x)=>parseInt(x[1])));showModal()}}><Icon name="heart-pulse" type="material-community" color="#FFF" size={50}></Icon></TouchableOpacity>
             <Text style={{color:"#FFF", fontSize:15, fontWeight:'bold', textAlign:'center'}}>Heart Rate</Text>
             <Text style={{color:"#FFF", fontSize:40, fontWeight:'bold', textAlign:'center'}}>{hrateData.restingHeartRate}</Text>
             <Text style={{color:"#FFF", fontSize:10, fontWeight:'bold', textAlign:'center'}}>BPM</Text>
@@ -144,7 +153,7 @@ export default function Home({route}) {
         style={{height:150, borderRadius:20, width:'45%', marginTop:'5%'}}
         >
         <View style={{backgroundColor:theme.secondarybg, marginTop:'5%'}}>
-        <TouchableOpacity onPress={()=>{setdatatype(respirationData.respirationValuesArray.flatMap((x)=>parseInt(x[1])));showModal()}}><Icon name="lungs" type="font-awesome-5" color="#FFF" size={40}></Icon></TouchableOpacity>
+        <TouchableOpacity onPress={()=>{_getReadings("getrespiration");setdatatype(respirationData.respirationValuesArray.flatMap((x)=>parseInt(x[1])));showModal()}}><Icon name="lungs" type="font-awesome-5" color="#FFF" size={40}></Icon></TouchableOpacity>
             <Text style={{color:"#FFF", fontSize:15, fontWeight:'bold', textAlign:'center'}}>Respiration Rate</Text>
             <Text style={{color:"#FFF", fontSize:40, fontWeight:'bold', textAlign:'center'}}>{respirationData.avgWakingRespirationValue}</Text>
             <Text style={{color:"#FFF", fontSize:10, fontWeight:'bold', textAlign:'center'}}></Text>
@@ -159,7 +168,7 @@ export default function Home({route}) {
         style={{height:150, borderRadius:20, width:'45%', marginVertical:'2.5%'}}
         >
         <View style={{backgroundColor:theme.secondarybg}}>
-        <TouchableOpacity onPress={()=>{setdatatype(respirationData.respirationValuesArray.flatMap((x)=>parseInt(x[1])));showModal()}}><Icon name="power-sleep" type="material-community" color="#FFF" size={45} style={{marginTop:'5%'}}></Icon></TouchableOpacity>
+        <TouchableOpacity onPress={()=>{_getReadings("getsleep");setdatatype(respirationData.respirationValuesArray.flatMap((x)=>parseInt(x[1])));showModal()}}><Icon name="power-sleep" type="material-community" color="#FFF" size={45} style={{marginTop:'5%'}}></Icon></TouchableOpacity>
             <Text style={{color:"#FFF", fontSize:15, fontWeight:'bold', textAlign:'center'}}>Sleep</Text>
             <Text style={{color:"#FFF", fontSize:40, fontWeight:'bold', textAlign:'center'}}>{sleep}</Text>
             <Text style={{color:"#FFF", fontSize:10, fontWeight:'bold', textAlign:'center'}}>HOURS</Text>
@@ -170,7 +179,7 @@ export default function Home({route}) {
         style={{height:150, borderRadius:20, width:'45%', marginVertical:'2.5%'}}
         >
         <View style={{backgroundColor:theme.secondarybg, marginTop:'5%'}}>
-        <TouchableOpacity onPress={()=>{setdatatype(stressData.stressValuesArray.flatMap((x)=>parseInt(x[1])));showModal()}}><Icon name="head-alert" type="material-community" color="#FFF" size={45}></Icon></TouchableOpacity>
+        <TouchableOpacity onPress={()=>{_getReadings("getstress");setdatatype(stressData.stressValuesArray.flatMap((x)=>parseInt(x[1])));showModal()}}><Icon name="head-alert" type="material-community" color="#FFF" size={45}></Icon></TouchableOpacity>
             <Text style={{color:"#FFF", fontSize:15, fontWeight:'bold', textAlign:'center'}}>Stress</Text>
             <Text style={{color:"#FFF", fontSize:40, fontWeight:'bold', textAlign:'center'}}>{stressData.avgStressLevel}</Text>
             <Text style={{color:"#FFF", fontSize:10, fontWeight:'bold', textAlign:'center'}}>AVERAGE</Text>
@@ -194,7 +203,7 @@ export default function Home({route}) {
         style={{height:180, borderRadius:20, marginVertical:'2.5%', marginHorizontal:'5%'}}
         >
         <View style={{backgroundColor:theme.secondarybg, marginTop:'5%'}}>
-        <TouchableOpacity onPress={()=>{showModal()}}><Icon name="md-water" type="ionicon" color="#FFF" size={45}></Icon></TouchableOpacity>
+        <TouchableOpacity onPress={()=>{_getReadings("getsweat");setdatatype(result.flatMap((x)=>parseInt(x[1])));setsecondarydata(result.flatMap((x)=>parseInt(x[2])));showModal()}}><Icon name="md-water" type="ionicon" color="#FFF" size={45}></Icon></TouchableOpacity>
             <Text style={{color:"#FFF", fontSize:15, fontWeight:'bold', textAlign:'center'}}>Perspiration</Text>
             <View style={{flexDirection:'row', justifyContent:'center'}}>
                 <View>
