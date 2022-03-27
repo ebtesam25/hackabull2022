@@ -25,6 +25,27 @@ import respirationData from '../data/respiration.json';
 import stepsData from '../data/steps.json';
 import stressData from '../data/stress.json';
 
+const _getReadings= (action) =>{
+    var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+        "action": action
+        });
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        fetch("https://gx1znbtqdb.execute-api.us-east-1.amazonaws.com/hackabull2022test", requestOptions)
+        .then(response => response.json())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+}
+
 export default function Home({route}) {
     const navigation = useNavigation();
     const {userid, name} = route.params;
