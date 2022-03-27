@@ -302,9 +302,103 @@ def addStress(conn, reading):
     conn.commit()
 
 
+def getresources(conn, types):
+    # ress = []
+    with conn.cursor() as cur:
+        cur.execute("SELECT resourcename, tags FROM cdata")
+        # logging.debug("print_balances(): status message: %s", cur.statusmessage)
+        rows = cur.fetchall()
+        conn.commit()
+        # print(f"Balances at {time.asctime()}:")
+        results = []
+        for row in rows:
+            q = {}
+            print(row)
+            # print (type(row))
+            q['name'] = str(row[0])
+            q['tags'] = str(row[1])
+            tag = str(row[1])
+            tag = tag.lower()
+            # q['question'] = str(row[1])
+            # q['question'] = str(row[2])
+            
+            if 'all' in types:
+                results.append(str(row[0]))
+                results.append("the following resources are available")
+                continue
+            
+            tags = tag.split(';')
+
+            print (tags)
+
+                   
+        return results
 
 
+    
+def importfromcsv(conn, csvfile, fieldlist):
+    cdstring = "CREATE TABLE IF NOT EXISTS cdata (cid INT GENERATED ALWAYS AS IDENTITY" 
+    #, first_name VARCHAR(50), last_name VARCHAR(50), dob DATE, email VARCHAR(255), PRIMARY KEY (cid))"
+    
+    for f in fieldlist:
+        cdstring += ", " + f['name'] + " " + f['type'] + "(" +f['size'] + ")"
 
+    cdstring += ", PRIMARY KEY (cid))"
+    
+    print (cdstring)
+    
+    with conn.cursor() as cur:
+        cur.execute(cdstring)
+    conn.commit()
+    
+    cdstring = "COPY cdata( "
+    # first_name, last_name, dob, email) FROM "+csvfile  +" DELIMITER ','CSV HEADER;"
+    
+    for f in fieldlist:
+        cdstring += f['name'] + ", "
+    
+    cdstring = ")".join(cdstring.rsplit(",", 1))
+    cdstring += "FROM "+csvfile  +" DELIMITER ','CSV HEADER;"
+    
+    print (cdstring)
+    
+    
+    # with conn.cursor() as cur:
+    #     f = open(csvfile, 'r')
+    #     cur.copy_from(f, "cdata", sep=',')
+    #     f.close()
+    #     # cur.execute(cdstring)
+    
+    cur = conn.cursor()
+    # with open(csvfile, 'r') as f:
+    #     # Notice that we don't need the `csv` module.
+    #     next(f) # Skip the header row.
+    #     cur.copy_from(f, 'cdata', sep=',')
+
+    # conn.commit()
+    
+    with open(csvfile, 'r') as f:
+        reader = csv.reader(f)
+        next(reader) # Skip the header row.
+        for row in reader:
+            cdstring = "UPSERT INTO cdata (id, category, resourcename, link, description, eligibility, tags, contactinfo, coordinates, metadata1, metadata2) VALUES ("
+            print (row)
+            for r in row:
+                print(r)
+                print(type(r))
+                cdstring +="'" + r + "',"
+                
+            cdstring = ")".join(cdstring.rsplit(",", 1))
+                
+            print (cdstring)
+            cur.execute(cdstring)    
+            # cur.execute("INSERT INTO cdata VALUES (DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],))
+            
+            
+    conn.commit()
+    
+    print("csv imported")    
+    
 
 
 def initSteps(conn):
