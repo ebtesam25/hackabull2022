@@ -79,7 +79,6 @@ def delete_users(conn):
 
 
 def connector():
-    # conn=psycopg2.connect("dbname='nifty-puma-91.defaultdb' user='muntaser' password='rootpassword' host='free-tier.gcp-us-central1.cockroachlabs.cloud' port='26257'")
     conn=psycopg2.connect(secrets['dbconn'])
     return conn
    
