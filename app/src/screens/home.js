@@ -30,6 +30,7 @@ import stressData from '../data/stress.json';
 
 export default function Home({route}) {
     const [result, setresult] = useState(null);
+    const [pers, setpers] = useState(false)
 
     const navigation = useNavigation();
     const {userid, name} = route.params;
@@ -95,9 +96,7 @@ export default function Home({route}) {
                 {
                 data: datatype
                 },
-                {
-                data:secondarydata
-                }
+                
             ]
             }}
             width={370} // from react-native
@@ -124,6 +123,40 @@ export default function Home({route}) {
             borderRadius: 10,
             }}
         />
+        {pers&&<LineChart
+            withInnerLines={false}
+            data={{
+            datasets: [
+                {
+                data: secondarydata
+                }
+                
+            ]
+            }}
+            width={370} // from react-native
+            height={250}
+            yAxisInterval={1} // optional, defaults to 1
+            chartConfig={{
+            backgroundColor: theme.primary,
+            backgroundGradientFrom: theme.primary,
+            backgroundGradientTo: theme.secondary,
+            decimalPlaces: 0, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            style: {
+                borderRadius: 10
+            },
+            propsForDots: {
+                r: "1",
+                strokeWidth: "2",
+                stroke: "#FFF"
+            }
+            }}
+            bezier
+            style={{
+            borderRadius: 10,
+            }}
+        />}
         
         </BlurView>
         </Modal>
@@ -203,7 +236,7 @@ export default function Home({route}) {
         style={{height:180, borderRadius:20, marginVertical:'2.5%', marginHorizontal:'5%'}}
         >
         <View style={{backgroundColor:theme.secondarybg, marginTop:'5%'}}>
-        <TouchableOpacity onPress={()=>{_getReadings("getsweat");setdatatype(result.flatMap((x)=>parseInt(x[1])));setsecondarydata(result.flatMap((x)=>parseInt(x[2])));showModal()}}><Icon name="md-water" type="ionicon" color="#FFF" size={45}></Icon></TouchableOpacity>
+        <TouchableOpacity onPress={()=>{_getReadings("getsweat");setpers(true);setdatatype(result.flatMap((x)=>parseInt(x[1])));setsecondarydata(result.flatMap((x)=>parseInt(x[2])));showModal()}}><Icon name="md-water" type="ionicon" color="#FFF" size={45}></Icon></TouchableOpacity>
             <Text style={{color:"#FFF", fontSize:15, fontWeight:'bold', textAlign:'center'}}>Perspiration</Text>
             <View style={{flexDirection:'row', justifyContent:'center'}}>
                 <View>
